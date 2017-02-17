@@ -155,32 +155,33 @@ def install(numbers: List[int], packages: List[dict]):
 def autoremove():
     """
     """
-    orphans: List[str] = run(['pacaur', '-Qdttq'], stdout=PIPE).stdout.decode().split('\n')
-    args = ['pacman' '-Rs']
-    args.extend(orphans)
-    call(args)
+    orphans: List[str] = run(['pacaur', '-Qdtq'], stdout=PIPE).stdout.decode().split('\n')
+    if orphans != ['', ]:
+        args = ['pacaur', '-Rs']
+        args.extend(orphans)
+        call(args)
 
 
 if __name__ == '__main__':
     if len(sys.argv) > 1:
         if '-h' in sys.argv[1:] or '--help' in sys.argv[1:]:
-            print(('pac - wrapper around pacaur to mimic yaourts search feature'
-                   ''
-                   'Usage:'
-                   '    pac'
-                   '    pac <search_pattern>'
-                   '    pac (-a | --autoremove)'
-                   '    pac (-h | --help)'
-                   '    pac <pacaur_arguments>'
-                   ''
-                   'Options:'
-                   '-a, --autoremove    Removes orphan packages.'
-                   '-j, --help          Shows this help.'
-                   ''
-                   'Invoking pac without arguments is equivalent to `pacaur -Syu`'
-                   ''
-                   'MIT license'
-                   'https://github.com/XenGi/pac'))
+            print(('pac - wrapper around pacaur to mimic yaourts search feature\n'
+                   '\n'
+                   'Usage:\n'
+                   '    pac\n'
+                   '    pac <search_pattern>\n'
+                   '    pac (-a | --autoremove)\n'
+                   '    pac (-h | --help)\n'
+                   '    pac <pacaur_arguments>\n'
+                   '\n'
+                   'Options:\n'
+                   '-a, --autoremove    Removes orphan packages.\n'
+                   '-h, --help          Shows this help.\n'
+                   '\n'
+                   'Invoking pac without arguments is equivalent to `pacaur -Syu`.\n'
+                   '\n'
+                   'MIT licensed\n'
+                   'https://github.com/XenGi/pac\n'))
         elif '-a' in sys.argv[1:] or '--autoremove' in sys.argv[1:]:
             autoremove()
         elif sys.argv[1][:2] in ['-D', '-F', '-Q', '-R', '-S', '-T', '-U']:
