@@ -11,7 +11,7 @@ __author__ = 'Ricardo Band'
 __copyright__ = 'Copyright 2017, Ricardo band'
 __credits__ = ['Ricardo Band']
 __license__ = 'MIT'
-__version__ = '1.1.0'
+__version__ = '1.3.0'
 __maintainer__ = 'Ricardo Band'
 __email__ = 'email@ricardo.band'
 
@@ -46,9 +46,8 @@ def search(search_term: str) -> List[dict]:
     - if the package is already installed the line has the string '[installed]' in it
     - if the repo is the aur the line will have the votes which look like '(252, 3.70)'
 
-    the only parts tha is interesting here is the package name because we need that to install the packages afterwards.
-    We still put everything in a dict to make the output more colorful.
-
+    The important part here is the package name because we need that to install the packages afterwards.
+    We also put everything else in a dict to make the output more colorful.
     """
     result: List[dict] = []
     out: str = run(['pacaur', '-Ss', search_term], stdout=PIPE).stdout.decode()
@@ -92,7 +91,7 @@ def present(entries: List[dict]):
         Virtual filesystem implementation for GIO (MTP backend; Android, media player)
     2   community/android-file-transfer 3.0-2
         Android MTP client with minimalistic UI
-    3   aur/android-studio 2.2.3.0-1 (626, 22.50) [installed]
+    3   aur/android-studio 2.2.3.0-1 [installed] (626, 22.50)
         The official Android IDE (Stable branch)
     4   aur/android-ndk r13b-1 (252, 3.70)
         Android C/C++ developer kit
@@ -153,16 +152,47 @@ def install(numbers: List[int], packages: List[dict]):
     call(f"pacaur -S {' '.join(names)}", shell=True)
 
 
+def autoremove():
+    """
+    """
+    orphans: List[str] = run(['pacaur', '-Qdttq'], stdout=PIPE).stdout.decode().split('\n')
+    args = ['pacman' '-Rs']
+    args.extend(orphans)
+    call(args)
+
+
 if __name__ == '__main__':
     if len(sys.argv) > 1:
-        if sys.argv[1][:2] in ['-S', '-Q', '-R']:
+        if '-h' in sys.argv[1:] or '--help' in sys.argv[1:]:
+            print(('pac - wrapper around pacaur to mimic yaourts search feature'
+                   ''
+                   'Usage:'
+                   '    pac'
+                   '    pac <search_pattern>'
+                   '    pac (-a | --autoremove)'
+                   '    pac (-h | --help)'
+                   '    pac <pacaur_arguments>'
+                   ''
+                   'Options:'
+                   '-a, --autoremove    Removes orphan packages.'
+                   '-j, --help          Shows this help.'
+                   ''
+                   'Invoking pac without arguments is equivalent to `pacaur -Syu`'
+                   ''
+                   'MIT license'
+                   'https://github.com/XenGi/pac'))
+        elif '-a' in sys.argv[1:] or '--autoremove' in sys.argv[1:]:
+            autoremove()
+        elif sys.argv[1][:2] in ['-D', '-F', '-Q', '-R', '-S', '-T', '-U']:
             call(f"pacaur {' '.join(sys.argv[1:])}", shell=True)
         else:
-            entries = search(' '.join(sys.argv[1:]))
-            present(entries)
-            numbers = input('\33[93m==>\33[0m ')
-            numbers = parse_num(numbers)
-            install(numbers, entries)
+            try:
+                entries = search(' '.join(sys.argv[1:]))
+                present(entries)
+                numbers = parse_num(input('\33[93m==>\33[0m '))
+                install(numbers, entries)
+            except KeyboardInterrupt:
+                pass
     else:
         call('pacaur -Syu', shell=True)
 
