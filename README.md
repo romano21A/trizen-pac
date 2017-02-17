@@ -43,5 +43,5 @@ Additional arguments:
 
 | Argument            | Description                                                                      |
 |---------------------|----------------------------------------------------------------------------------|
-| `-a | --autoremove` | Removes orphan packages by issuing `pacman -Qdtt` and removing the list it gets. |
+| `-a | --autoremove` | Removes orphan packages by issuing `pacman -Qdt` and removing the list it gets. |
 
