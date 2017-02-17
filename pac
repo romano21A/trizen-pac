@@ -108,6 +108,12 @@ def present(entries: List[dict]):
     CYELLOWBG: str = '\33[43m'
     CYELLOWBG2: str = '\33[103m'
 
+    # TODO: based on the maximum length of the index prepend spaces
+    #  999 core/foo
+    #      Some text.
+    # 1000 aur/bar
+    #      Some more text.
+
     for index, entry in enumerate(entries):
         print(f"{CBLACK}{CYELLOWBG}{index + 1}{CEND} {CVIOLET2}{entry['repo']}/{CEND}{CBOLD}{entry['package']}{CEND} {CGREEN2}{entry['version']}{CEND}", end='')
         if entry['group']:
