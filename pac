@@ -11,7 +11,7 @@ __author__ = 'Ricardo Band'
 __copyright__ = 'Copyright 2017, Ricardo band'
 __credits__ = ['Ricardo Band']
 __license__ = 'MIT'
-__version__ = '1.3.0'
+__version__ = '1.3.1'
 __maintainer__ = 'Ricardo Band'
 __email__ = 'email@ricardo.band'
 
@@ -72,12 +72,12 @@ def search(search_term: str) -> List[dict]:
                 if l[2].endswith(')'):
                     entry['group'] = l[2]
                 else:
-                    entry['votes'] = '%s %s' % (l[2], l[3])
+                    entry['votes'] = f'{l[2]} {l[3]}'
             if len(l) > 3 and l[3].startswith('('):
                 if l[3].endswith(')'):
                     entry['group'] = l[3]
                 else:
-                    entry['votes'] = '%s %s' % (l[3], l[4])
+                    entry['votes'] = f'{l[3]} {l[4]}'
             if '[installed]' in l:
                 entry['installed'] = '[installed]'
     return result
@@ -108,13 +108,8 @@ def present(entries: List[dict]):
     CYELLOWBG: str = '\33[43m'
     CYELLOWBG2: str = '\33[103m'
 
-    # TODO: based on the maximum length of the index prepend spaces
-    #  999 core/foo
-    #      Some text.
-    # 1000 aur/bar
-    #      Some more text.
-
     for index, entry in enumerate(entries):
+        padding = len(str(index + 1))
         print(f"{CBLACK}{CYELLOWBG}{index + 1}{CEND} {CVIOLET2}{entry['repo']}/{CEND}{CBOLD}{entry['package']}{CEND} {CGREEN2}{entry['version']}{CEND}", end='')
         if entry['group']:
             print(f" {entry['group']}", end='')
@@ -122,9 +117,9 @@ def present(entries: List[dict]):
             print(f" {CBLACK}{CYELLOWBG2}{entry['installed']}{CEND}", end='')
         if entry['votes']:
             print(f" {CBLACK}{CYELLOWBG2}{entry['votes']}{CEND}", end='')
-        print(f"\n    {entry['description']}")
-    print(f"{CYELLOW2}==>{CEND} {CBOLD}Enter n° of packages to be installed (ex: 1 2 3 or 1-3){CEND}")
-    print(f"{CYELLOW2}==>{CEND} {CBOLD}-------------------------------------------------------{CEND}")
+        print(f"\n{' ' * len(str(index + 1))} {entry['description']}")
+    print(f'{CYELLOW2}==>{CEND} {CBOLD}Enter n° of packages to be installed (ex: 1 2 3 or 1-3){CEND}')
+    print(f'{CYELLOW2}==>{CEND} {CBOLD}-------------------------------------------------------{CEND}')
 
 
 def parse_num(numbers: str) -> List[int]:
@@ -145,7 +140,10 @@ def parse_num(numbers: str) -> List[int]:
         elif n.isdecimal():
             result.append(int(n) - 1)
         else:
-            sys.exit(f'{n} is not a number')
+            if n == 'q':
+                sys.exit()
+            else:
+                sys.exit(f'Could not parse "{n}". Try 1 2 3 or 1-3.')
 
     return result
 
@@ -155,7 +153,8 @@ def install(numbers: List[int], packages: List[dict]):
     Gets the chosen packages and concatinates them. Then executes the pacaur command with the packages to install them.
     """
     names = [packages[i]['package'] for i in numbers]
-    call(f"pacaur -S {' '.join(names)}", shell=True)
+    args = ['pacaur', '-S']
+    call(args.extend(names), shell=True)
 
 
 def autoremove():
@@ -191,13 +190,16 @@ if __name__ == '__main__':
         elif '-a' in sys.argv[1:] or '--autoremove' in sys.argv[1:]:
             autoremove()
         elif sys.argv[1][:2] in ['-D', '-F', '-Q', '-R', '-S', '-T', '-U']:
-            call(f"pacaur {' '.join(sys.argv[1:])}", shell=True)
+            call(['pacaur', ].extend(sys.argv[1:]), shell=True)
         else:
             try:
                 entries = search(' '.join(sys.argv[1:]))
-                present(entries)
-                numbers = parse_num(input('\33[93m==>\33[0m '))
-                install(numbers, entries)
+                if len(entries) > 0:
+                    present(entries)
+                    numbers = parse_num(input('\33[93m==>\33[0m '))
+                    install(numbers, entries)
+                else:
+                    print('Nothing found.')
             except KeyboardInterrupt:
                 pass
     else:
