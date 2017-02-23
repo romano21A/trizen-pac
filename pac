@@ -11,7 +11,7 @@ __author__ = 'Ricardo Band'
 __copyright__ = 'Copyright 2017, Ricardo band'
 __credits__ = ['Ricardo Band']
 __license__ = 'MIT'
-__version__ = '1.3.3'
+__version__ = '1.3.4'
 __maintainer__ = 'Ricardo Band'
 __email__ = 'email@ricardo.band'
 
@@ -161,9 +161,7 @@ def autoremove():
     """
     orphans: List[str] = run(['pacaur', '-Qdtq'], stdout=PIPE).stdout.decode().split('\n')
     if orphans != ['', ]:
-        args = ['pacaur', '-Rs']
-        args.extend(orphans)
-        call(args)
+        call(f'pacaur -Rs {" ".join(orphans)}')
 
 
 if __name__ == '__main__':
@@ -189,7 +187,7 @@ if __name__ == '__main__':
         elif '-a' in sys.argv[1:] or '--autoremove' in sys.argv[1:]:
             autoremove()
         elif sys.argv[1][:2] in ['-D', '-F', '-Q', '-R', '-S', '-T', '-U']:
-            call(['pacaur', ].extend(sys.argv[1:]), shell=True)
+            call(f'pacaur {" ".join(sys.argv[1:])}', shell=True)
         else:
             try:
                 entries = search(' '.join(sys.argv[1:]))
