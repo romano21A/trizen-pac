@@ -11,7 +11,7 @@ __author__ = 'Ricardo Band'
 __copyright__ = 'Copyright 2017, Ricardo band'
 __credits__ = ['Ricardo Band']
 __license__ = 'MIT'
-__version__ = '1.3.1'
+__version__ = '1.3.2'
 __maintainer__ = 'Ricardo Band'
 __email__ = 'email@ricardo.band'
 
@@ -153,8 +153,7 @@ def install(numbers: List[int], packages: List[dict]):
     Gets the chosen packages and concatinates them. Then executes the pacaur command with the packages to install them.
     """
     names = [packages[i]['package'] for i in numbers]
-    args = ['pacaur', '-S']
-    call(args.extend(names), shell=True)
+    call(f'pacaur -S {" ".join(names)}', shell=True)
 
 
 def autoremove():
@@ -197,6 +196,8 @@ if __name__ == '__main__':
                 if len(entries) > 0:
                     present(entries)
                     numbers = parse_num(input('\33[93m==>\33[0m '))
+                    print(numbers)
+                    print(entries)
                     install(numbers, entries)
                 else:
                     print('Nothing found.')
