@@ -11,7 +11,7 @@ __author__ = 'Ricardo Band'
 __copyright__ = 'Copyright 2017, Ricardo band'
 __credits__ = ['Ricardo Band']
 __license__ = 'MIT'
-__version__ = '1.3.2'
+__version__ = '1.3.3'
 __maintainer__ = 'Ricardo Band'
 __email__ = 'email@ricardo.band'
 
@@ -196,8 +196,6 @@ if __name__ == '__main__':
                 if len(entries) > 0:
                     present(entries)
                     numbers = parse_num(input('\33[93m==>\33[0m '))
-                    print(numbers)
-                    print(entries)
                     install(numbers, entries)
                 else:
                     print('Nothing found.')
