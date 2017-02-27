@@ -9,9 +9,9 @@ Usage:
 
 __author__ = 'Ricardo Band'
 __copyright__ = 'Copyright 2017, Ricardo band'
-__credits__ = ['Ricardo Band']
+__credits__ = ['Ricardo Band', 'spacekookie']
 __license__ = 'MIT'
-__version__ = '1.3.4'
+__version__ = '1.3.5'
 __maintainer__ = 'Ricardo Band'
 __email__ = 'email@ricardo.band'
 
@@ -185,6 +185,7 @@ if __name__ == '__main__':
                    'MIT licensed\n'
                    'https://github.com/XenGi/pac\n'))
         elif '-a' in sys.argv[1:] or '--autoremove' in sys.argv[1:]:
+            # TODO: add warning
             autoremove()
         elif sys.argv[1][:2] in ['-D', '-F', '-Q', '-R', '-S', '-T', '-U']:
             call(f'pacaur {" ".join(sys.argv[1:])}', shell=True)
