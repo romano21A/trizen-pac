@@ -161,7 +161,7 @@ def autoremove():
     """
     orphans: List[str] = run(['pacaur', '-Qdtq'], stdout=PIPE).stdout.decode().split('\n')
     if orphans != ['', ]:
-        call(f'pacaur -Rs {" ".join(orphans)}')
+        call(f'pacaur -Rs {" ".join(orphans)}', shell=True)
 
 
 if __name__ == '__main__':
