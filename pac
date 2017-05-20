@@ -4,14 +4,28 @@
 pac - wrapper around pacaur to mimic yaourts search feature
 
 Usage:
-    pac <searchpattern>
+  pac
+  pac <search_pattern>...
+  pac (-a | --autoremove)
+  pac (-h | --help)
+  pac (-v | --version)
+  pac <pacaur arguments>...
+
+Options:
+  -a, --autoremove  Removes orphan packages
+  -h, --help        Display this help
+  -v, --version     Display version information
+
+Invoking pac without arguments is equivalent to 'pacaur -Syu'.
+
+https://github.com/XenGi/pac
 """
 
 __author__ = 'Ricardo Band'
 __copyright__ = 'Copyright 2017, Ricardo band'
 __credits__ = ['Ricardo Band']
 __license__ = 'MIT'
-__version__ = '1.3.0'
+__version__ = '1.3.1'
 __maintainer__ = 'Ricardo Band'
 __email__ = 'email@ricardo.band'
 
@@ -171,23 +185,9 @@ def autoremove():
 if __name__ == '__main__':
     if len(sys.argv) > 1:
         if '-h' in sys.argv[1:] or '--help' in sys.argv[1:]:
-            print(('pac - wrapper around pacaur to mimic yaourts search feature\n'
-                   '\n'
-                   'Usage:\n'
-                   '    pac\n'
-                   '    pac <search_pattern>\n'
-                   '    pac (-a | --autoremove)\n'
-                   '    pac (-h | --help)\n'
-                   '    pac <pacaur_arguments>\n'
-                   '\n'
-                   'Options:\n'
-                   '-a, --autoremove    Removes orphan packages.\n'
-                   '-h, --help          Shows this help.\n'
-                   '\n'
-                   'Invoking pac without arguments is equivalent to `pacaur -Syu`.\n'
-                   '\n'
-                   'MIT licensed\n'
-                   'https://github.com/XenGi/pac\n'))
+            print(__doc__)
+        elif '-v' in sys.argv[1:] or '--version' in sys.argv[1:]:
+            print('pac v%s' % __version__)
         elif '-a' in sys.argv[1:] or '--autoremove' in sys.argv[1:]:
             autoremove()
         elif sys.argv[1][:2] in ['-D', '-F', '-Q', '-R', '-S', '-T', '-U']:
