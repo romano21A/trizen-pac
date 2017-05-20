@@ -25,7 +25,7 @@ __author__ = 'Ricardo Band'
 __copyright__ = 'Copyright 2017, Ricardo band'
 __credits__ = ['Ricardo Band', 'spacekookie']
 __license__ = 'MIT'
-__version__ = '1.3.5'
+__version__ = '1.3.6'
 __maintainer__ = 'Ricardo Band'
 __email__ = 'email@ricardo.band'
 
