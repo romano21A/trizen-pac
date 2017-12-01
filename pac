@@ -29,6 +29,7 @@ __version__ = '1.3.7'
 __maintainer__ = 'Ricardo Band'
 __email__ = 'email@ricardo.band'
 
+import os
 import sys
 from typing import List
 from subprocess import call, run, PIPE
@@ -57,14 +58,16 @@ def search(search_term: str) -> List[dict]:
     - package name is the identifiing string of the package
     - version can be any string but will most likely be something like 1.2.3-2
     - package group is a string in brackets
-    - if the package is already installed the line has the string '[installed]' in it
+    - if the package is already installed the line has the string '[installed]' or '[installed: some git ref]' in it
     - if the repo is the aur the line will have the votes which look like '(252, 3.70)'
 
     The important part here is the package name because we need that to install the packages afterwards.
     We also put everything else in a dict to make the output more colorful.
     """
     result: List[dict] = []
-    out: str = run(['pacaur', '-Ss', search_term], stdout=PIPE).stdout.decode()
+    env = os.environ.copy()
+    env['LANG'] = 'C'
+    out: str = run(['pacaur', '-Ss', search_term], stdout=PIPE, env=env).stdout.decode()
     entry: dict = {}
 
     for line in out.split('\n'):
@@ -92,7 +95,10 @@ def search(search_term: str) -> List[dict]:
                     entry['group'] = l[3]
                 else:
                     entry['votes'] = f'{l[3]} {l[4]}'
-            if '[installed]' in l:
+            if '[installed:' in l:
+                # TODO: parse installed version
+                entry['installed'] = '[installed]'
+            elif '[installed]' in l:
                 entry['installed'] = '[installed]'
     return result
 
@@ -173,7 +179,9 @@ def install(numbers: List[int], packages: List[dict]):
 def autoremove():
     """
     """
-    orphans: List[str] = run(['pacaur', '-Qdtq'], stdout=PIPE).stdout.decode().split('\n')
+    env = os.environ.copy()
+    env['LANG'] = 'C'
+    orphans: List[str] = run(['pacaur', '-Qdtq'], stdout=PIPE, env=env).stdout.decode().split('\n')
     if orphans != ['', ]:
         call(f'pacaur -Rs {" ".join(orphans)}', shell=True)
 
