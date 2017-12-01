@@ -154,7 +154,7 @@ def parse_num(numbers: str) -> List[int]:
         elif n.isdecimal():
             result.append(int(n) - 1)
         else:
-            if n == 'q':
+            if n == '':
                 sys.exit()
             else:
                 sys.exit(f'Could not parse "{n}". Try 1 2 3 or 1-3.')
