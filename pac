@@ -168,13 +168,13 @@ def parse_num(numbers: str) -> List[int]:
     return result
 
 
-def install(numbers: List[int], packages: List[dict]):
+def install(numbers: List[int], packages: List[dict], pacaurargs: str = None):
     """
     Gets the chosen packages and concatinates them. Then executes the pacaur command with the packages to install them.
     """
     names = [packages[i]['package'] for i in numbers]
     try:
-        call(f'pacaur -S {" ".join(names)}', shell=True)
+        call(f'pacaur {pacaurargs} -S {" ".join(names)}', shell=True)
     except KeyboardInterrupt:
         pass
 
@@ -207,12 +207,19 @@ if __name__ == '__main__':
             except KeyboardInterrupt:
                 pass
         else:
+            pacaurargs = ""
+            if '--noconfirm' in sys.argv:
+                pacaurargs += '--noconfirm '
+                sys.argv.remove('--noconfirm')
+            if '--noedit' in sys.argv:
+                pacaurargs += '--noedit '
+                sys.argv.remove('--noedit')
             try:
                 entries = search(' '.join(sys.argv[1:]))
                 if len(entries) > 0:
                     present(entries)
                     numbers = parse_num(input('\33[93m==>\33[0m ').strip())
-                    install(numbers, entries)
+                    install(numbers, entries, pacaurargs)
                 else:
                     print('Nothing found.')
             except KeyboardInterrupt:
