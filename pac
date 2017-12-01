@@ -173,7 +173,10 @@ def install(numbers: List[int], packages: List[dict]):
     Gets the chosen packages and concatinates them. Then executes the pacaur command with the packages to install them.
     """
     names = [packages[i]['package'] for i in numbers]
-    call(f'pacaur -S {" ".join(names)}', shell=True)
+    try:
+        call(f'pacaur -S {" ".join(names)}', shell=True)
+    except KeyboardInterrupt:
+        pass
 
 
 def autoremove():
@@ -183,7 +186,10 @@ def autoremove():
     env['LANG'] = 'C'
     orphans: List[str] = run(['pacaur', '-Qdtq'], stdout=PIPE, env=env).stdout.decode().split('\n')
     if orphans != ['', ]:
-        call(f'pacaur -Rs {" ".join(orphans)}', shell=True)
+        try:
+            call(f'pacaur -Rs {" ".join(orphans)}', shell=True)
+        except KeyboardInterrupt:
+            pass
 
 
 if __name__ == '__main__':
@@ -196,7 +202,10 @@ if __name__ == '__main__':
             # TODO: add warning
             autoremove()
         elif sys.argv[1][:2] in ['-D', '-F', '-Q', '-R', '-S', '-T', '-U']:
-            call(f'pacaur {" ".join(sys.argv[1:])}', shell=True)
+            try:
+                call(f'pacaur {" ".join(sys.argv[1:])}', shell=True)
+            except KeyboardInterrupt:
+                pass
         else:
             try:
                 entries = search(' '.join(sys.argv[1:]))
@@ -209,5 +218,8 @@ if __name__ == '__main__':
             except KeyboardInterrupt:
                 pass
     else:
-        call('pacaur -Syu', shell=True)
+        try:
+            call('pacaur -Syu', shell=True)
+        except KeyboardInterrupt:
+            pass
 
