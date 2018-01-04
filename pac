@@ -1,33 +1,33 @@
 #!/usr/bin/env python3
 
 """
-pac - wrapper around pacaur to mimic yaourts search feature
+tpac - wrapper around pacaur to mimic yaourts search feature
+    Forked from XenGi's pac for pacaur (https://github.com/XenGi/pac)
 
 Usage:
-  pac
-  pac <search_pattern>...
-  pac (-a | --autoremove)
-  pac (-h | --help)
-  pac (-v | --version)
-  pac <pacaur arguments>...
+  tpac
+  tpac <search_pattern>...
+  tpac (-a | --autoremove)
+  tpac (-h | --help)
+  tpac (-v | --version)
+  tpac <trizen arguments>...
 
 Options:
   -a, --autoremove  Removes orphan packages
   -h, --help        Display this help
   -v, --version     Display version information
 
-Invoking pac without arguments is equivalent to 'pacaur -Syu'.
+Invoking tpac without arguments is equivalent to 'trizen -Syu'.
 
-https://github.com/XenGi/pac
+https://github.com/romano21A/trizen-pac
 """
 
-__author__ = 'Ricardo Band'
-__copyright__ = 'Copyright 2017, Ricardo band'
+__author__ = 'original code by Ricardo Band; modified by romano21A'
+__copyright__ = ['Copyright 2017, Ricardo band', 'Copyright 2018, romano21A']
 __credits__ = ['Ricardo Band', 'spacekookie']
 __license__ = 'MIT'
-__version__ = '1.3.7'
-__maintainer__ = 'Ricardo Band'
-__email__ = 'email@ricardo.band'
+__version__ = '1.0'
+__email__ = 'mail.romano21A+tpac@gmail.com'
 
 import os
 import sys
@@ -35,7 +35,9 @@ from typing import List
 from subprocess import call, run, PIPE
 
 
+#TODO: implement differences between 'pacaur -Ss' and 'trizen -Ss'
 def search(search_term: str) -> List[dict]:
+    #TODO: change documentation from pacaur to trizen (especially the example output)
     """
     Search for the given terms using pacaur and return the results. The output of pacaur looks like this:
 
@@ -67,7 +69,7 @@ def search(search_term: str) -> List[dict]:
     result: List[dict] = []
     env = os.environ.copy()
     env['LANG'] = 'C'
-    out: str = run(['pacaur', '-Ss', search_term], stdout=PIPE, env=env).stdout.decode()
+    out: str = run(['trizen', '-Ss', search_term], stdout=PIPE, env=env).stdout.decode()
     entry: dict = {}
 
     for line in out.split('\n'):
@@ -168,13 +170,13 @@ def parse_num(numbers: str) -> List[int]:
     return result
 
 
-def install(numbers: List[int], packages: List[dict], pacaurargs: str = None):
+def install(numbers: List[int], packages: List[dict], trizenargs: str = None):
     """
-    Gets the chosen packages and concatinates them. Then executes the pacaur command with the packages to install them.
+    Gets the chosen packages and concatinates them. Then executes the trizen command with the packages to install them.
     """
     names = [packages[i]['package'] for i in numbers]
     try:
-        call(f'pacaur {pacaurargs} -S {" ".join(names)}', shell=True)
+        call(f'trizen {trizenargs} -S {" ".join(names)}', shell=True)
     except KeyboardInterrupt:
         pass
 
@@ -184,10 +186,10 @@ def autoremove():
     """
     env = os.environ.copy()
     env['LANG'] = 'C'
-    orphans: List[str] = run(['pacaur', '-Qdtq'], stdout=PIPE, env=env).stdout.decode().split('\n')
+    orphans: List[str] = run(['trizen', '-Qdtq'], stdout=PIPE, env=env).stdout.decode().split('\n')
     if orphans != ['', ]:
         try:
-            call(f'pacaur -Rs {" ".join(orphans)}', shell=True)
+            call(f'trizen -Rs {" ".join(orphans)}', shell=True)
         except KeyboardInterrupt:
             pass
 
@@ -197,36 +199,36 @@ if __name__ == '__main__':
         if '-h' in sys.argv[1:] or '--help' in sys.argv[1:]:
             print(__doc__)
         elif '-v' in sys.argv[1:] or '--version' in sys.argv[1:]:
-            print('pac v%s' % __version__)
+            print('tpac v%s' % __version__)
         elif '-a' in sys.argv[1:] or '--autoremove' in sys.argv[1:]:
             # TODO: add warning
             autoremove()
         elif sys.argv[1][:2] in ['-D', '-F', '-Q', '-R', '-S', '-T', '-U']:
             try:
-                call(f'pacaur {" ".join(sys.argv[1:])}', shell=True)
+                call(f'trizen {" ".join(sys.argv[1:])}', shell=True)
             except KeyboardInterrupt:
                 pass
         else:
-            pacaurargs = ""
+            trizenargs = ""
             if '--noconfirm' in sys.argv:
-                pacaurargs += '--noconfirm '
+                trizenargs += '--noconfirm '
                 sys.argv.remove('--noconfirm')
             if '--noedit' in sys.argv:
-                pacaurargs += '--noedit '
+                trizenargs += '--noedit '
                 sys.argv.remove('--noedit')
             try:
                 entries = search(' '.join(sys.argv[1:]))
                 if len(entries) > 0:
                     present(entries)
                     numbers = parse_num(input('\33[93m==>\33[0m ').strip())
-                    install(numbers, entries, pacaurargs)
+                    install(numbers, entries, trizenargs)
                 else:
                     print('Nothing found.')
             except KeyboardInterrupt:
                 pass
     else:
         try:
-            call('pacaur -Syu', shell=True)
+            call('trizen -Syu', shell=True)
         except KeyboardInterrupt:
             pass
 
