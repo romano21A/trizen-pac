@@ -1,8 +1,12 @@
-# pac
+# trizen-pac
 
-pacur wrapper to mimic yaourts search feature
+**trizen** wrapper to mimic yaourts search feature
+Forked from [XenGi's pac for **pacaur**](https://github.com/XenGi/pac)
 
-pac takes your arguments and just gives them to pacaur. Additionally it adds a few useful arguments and if none are
+To keep compatability with the original pac, the command for trizen-pac is `tpac`. 
+If you want to use `pac`, just use an alias.
+
+trizen-pac takes your arguments and just gives them to trizen. Additionally it adds a few useful arguments and if none are
 given except a search pattern it mimics the search function of yaourt and gives you a list of results. Then you just
 type the package numbers you want to install instead of having to type the names.
 
@@ -10,7 +14,7 @@ type the package numbers you want to install instead of having to type the names
 Example of how the search function works:
 
 ```
-$ pac chrome browser
+$ tpac chrome browser
 1 extra/chromium 56.0.2924.87-1 [installed]
     The open-source project behind Google Chrome, an attempt at creating a safer, faster, and more stable browser
 2 aur/google-chrome 56.0.2924.87-1 [installed] (1474, 39.50)
