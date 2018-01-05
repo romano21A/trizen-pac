@@ -84,20 +84,20 @@ def search(search_term: str) -> List[dict]:
             l = l[1].split(' ')
             entry['package'] = l[0]
             entry['version'] = l[1]
-            entry['votes'] = None
+            entry['misc'] = None
             entry['group'] = None
             entry['installed'] = None
             entry['outOfDate'] = None
             entry['unmaintained'] = None
 
             if entry['repo'] == 'aur':
-                entry['votes'] = ' '.join(l[-5:])
+                entry['misc'] = ' '.join(l[-5:])
                 if ('[installed:' in l) | ('[installed]' in l):
                     entry['installed'] = l[2]
                 if '[out-of-date]' in l:
                     entry['outOfDate'] = '[out-of-date]'
                 if '[unmaintained]' in l:
-                    entry['unmaintained'] = 'unmaintained'
+                    entry['unmaintained'] = '[unmaintained]'
             else:
                 if '[installed:' in l | '[installed]' in l:
                     entry['installed'] = l[-1:]
@@ -123,7 +123,6 @@ def search(search_term: str) -> List[dict]:
     return result
 
 
-#TODO: display new entries
 def present(entries: List[dict]):
     #TODO: modify documenation to reflect changes
     """
@@ -141,6 +140,7 @@ def present(entries: List[dict]):
     After that, a prompt will be printed but this is the task for another function.
     """
     CEND: str = '\33[0m'
+    CRED: str = '\33[31m'
     CBOLD: str = '\33[1m'
     CBLACK: str = '\33[30m'
     CVIOLET: str = '\33[35m'
@@ -157,8 +157,12 @@ def present(entries: List[dict]):
             print(f" {entry['group']}", end='')
         if entry['installed']:
             print(f" {CBLACK}{CYELLOWBG2}{entry['installed']}{CEND}", end='')
-        if entry['votes']:
-            print(f" {CBLACK}{CYELLOWBG2}{entry['votes']}{CEND}", end='')
+        if entry['outOfDate']:
+            print(f" {CRED}{entry['outOfDate']}{CEND}", end='')
+        if entry['unmaintained']:
+            print(f" {CRED}{entry['unmaintained']}{CEND}", end='')
+        if entry['misc']:
+            print(f" {CBLACK}{CYELLOWBG2}{entry['misc']}{CEND}", end='')
         print(f"\n{' ' * len(str(index + 1))} {entry['description']}")
     print(f'{CYELLOW2}==>{CEND} {CBOLD}Enter n° of packages to be installed (ex: 1 2 3 or 1-3){CEND}')
     print(f'{CYELLOW2}==>{CEND} {CBOLD}-------------------------------------------------------{CEND}')
