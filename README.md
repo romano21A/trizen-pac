@@ -1,10 +1,10 @@
 # trizen-pac
 
-**trizen** wrapper to mimic yaourts search feature
+**trizen** wrapper to mimic yaourts search feature\
 Forked from [XenGi's pac for **pacaur**](https://github.com/XenGi/pac)
 
-To keep compatability with the original pac, the command for trizen-pac is `tpac`. 
-If you want to use `pac`, just use an alias.
+To keep compatibility with the original pac, the command for trizen-pac is `tpac`. 
+Define an alias if you want to use `pac`.
 
 trizen-pac takes your arguments and just gives them to trizen. Additionally it adds a few useful arguments and if none are
 given except a search pattern it mimics the search function of yaourt and gives you a list of results. Then you just
