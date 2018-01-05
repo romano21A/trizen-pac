@@ -35,9 +35,9 @@ from typing import List
 from subprocess import call, run, PIPE
 
 
-#TODO: implement differences between 'pacaur -Ss' and 'trizen -Ss'
+#TODO: test implementation of differences between 'pacaur -Ss' and 'trizen -Ss'
 def search(search_term: str) -> List[dict]:
-    #TODO: change documentation from pacaur to trizen (especially the example output)
+    # TODO: modify documenation to reflect changes
     """
     Search for the given terms using pacaur and return the results. The output of pacaur looks like this:
 
@@ -87,6 +87,23 @@ def search(search_term: str) -> List[dict]:
             entry['votes'] = None
             entry['group'] = None
             entry['installed'] = None
+            entry['outOfDate'] = None
+            entry['unmaintained'] = None
+
+            if entry['repo'] == 'aur':
+                entry['votes'] = ' '.join(l[-5:])
+                if ('[installed:' in l) | ('[installed]' in l):
+                    entry['installed'] = l[2]
+                if '[out-of-date]' in l:
+                    entry['outOfDate'] = '[out-of-date]'
+                if '[unmaintained]' in l:
+                    entry['unmaintained'] = 'unmaintained'
+            else:
+                if '[installed:' in l | '[installed]' in l:
+                    entry['installed'] = l[-1:]
+                if l[2].endswith(')'):
+                    entry['group'] = l[2]
+            """
             if len(l) > 2 and l[2].startswith('('):
                 if l[2].endswith(')'):
                     entry['group'] = l[2]
@@ -102,10 +119,13 @@ def search(search_term: str) -> List[dict]:
                 entry['installed'] = '[installed]'
             elif '[installed]' in l:
                 entry['installed'] = '[installed]'
+            """
     return result
 
 
+#TODO: display new entries
 def present(entries: List[dict]):
+    #TODO: modify documenation to reflect changes
     """
     Present the list of entries with numbers in front of it. For each package it displays 2 lines like this:
 
