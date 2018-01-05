@@ -84,14 +84,16 @@ def search(search_term: str) -> List[dict]:
             l = l[1].split(' ')
             entry['package'] = l[0]
             entry['version'] = l[1]
-            entry['misc'] = None
+            entry['votes'] = None
             entry['group'] = None
             entry['installed'] = None
             entry['outOfDate'] = None
+            entry['lastUpdated'] = None
             entry['unmaintained'] = None
 
             if entry['repo'] == 'aur':
-                entry['misc'] = ' '.join(l[-5:])
+                entry['votes'] = ' '.join(l[-5:-3])
+                entry['lastUpdated'] = ' '.join(l[-3:])
                 if ('[installed:' in l) | ('[installed]' in l):
                     entry['installed'] = l[2]
                 if '[out-of-date]' in l:
@@ -153,6 +155,8 @@ def present(entries: List[dict]):
     for index, entry in enumerate(entries):
         padding = len(str(index + 1))
         print(f"{CBLACK}{CYELLOWBG}{index + 1}{CEND} {CVIOLET2}{entry['repo']}/{CEND}{CBOLD}{entry['package']}{CEND} {CGREEN2}{entry['version']}{CEND}", end='')
+        if entry['lastUpdated']:
+            print(f" {CGREEN2}{entry['lastUpdated']}{CEND}", end='')
         if entry['group']:
             print(f" {entry['group']}", end='')
         if entry['installed']:
@@ -161,8 +165,8 @@ def present(entries: List[dict]):
             print(f" {CRED}{entry['outOfDate']}{CEND}", end='')
         if entry['unmaintained']:
             print(f" {CRED}{entry['unmaintained']}{CEND}", end='')
-        if entry['misc']:
-            print(f" {CBLACK}{CYELLOWBG2}{entry['misc']}{CEND}", end='')
+        if entry['votes']:
+            print(f" {CBLACK}{CYELLOWBG2}{entry['votes']}{CEND}", end='')
         print(f"\n{' ' * len(str(index + 1))} {entry['description']}")
     print(f'{CYELLOW2}==>{CEND} {CBOLD}Enter n° of packages to be installed (ex: 1 2 3 or 1-3){CEND}')
     print(f'{CYELLOW2}==>{CEND} {CBOLD}-------------------------------------------------------{CEND}')
