@@ -2,7 +2,7 @@
 
 """
 tpac - wrapper around pacaur to mimic yaourts search feature
-    Forked from XenGi's pac for pacaur (https://github.com/XenGi/pac)
+    Forked from XenGi's tpac for pacaur (https://github.com/XenGi/tpac)
 
 Usage:
   tpac
@@ -19,7 +19,7 @@ Options:
 
 Invoking tpac without arguments is equivalent to 'trizen -Syu'.
 
-https://github.com/romano21A/trizen-pac
+https://github.com/romano21A/trizen-tpac
 """
 
 __author__ = 'original code by Ricardo Band; modified by romano21A'
@@ -94,16 +94,16 @@ def search(search_term: str) -> List[dict]:
             if entry['repo'] == 'aur':
                 entry['votes'] = ' '.join(l[-5:-3])
                 entry['lastUpdated'] = ' '.join(l[-3:])
-                if ('[installed:' in l) | ('[installed]' in l):
+                if '[installed:' in l or '[installed]' in l:
                     entry['installed'] = l[2]
                 if '[out-of-date]' in l:
                     entry['outOfDate'] = '[out-of-date]'
                 if '[unmaintained]' in l:
                     entry['unmaintained'] = '[unmaintained]'
             else:
-                if '[installed:' in l | '[installed]' in l:
+                if '[installed:' in l or '[installed]' in l:
                     entry['installed'] = l[-1:]
-                if l[2].endswith(')'):
+                if (len(l) > 2) and l[2].endswith(')'):
                     entry['group'] = l[2]
             """
             if len(l) > 2 and l[2].startswith('('):
